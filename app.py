@@ -62,9 +62,30 @@ with tab1:
     #Pie chart
     st.markdown("### Case Distribution by District")
     pie_fig = px.pie(bar_df, names="Distric", values="Cases", title="Proportion of Cases by District")
+
+    top_10 = bar_df.sort_values(by="Cases", ascending=False). head(10)
+    other_sum = bar_df.sort_values(by="Cases", ascending=False).iloc[10:]["Cases"].sum()
+    top_10.loc[len(top_10.index)] = ['others', other_sum]
+
+    pie_fig = px.pie(
+        top_10,
+        names="Distric",
+        values="Cases",
+        title="Proportion of Cases by Top 10 Districts",
+        hole=0.3)
+    pie_fig.update_traces(textinfo='percent+label')
     st.plotly_chart(pie_fig, use_container_width=True)
 
 
+#Heatmap
+with tab2:
+    st.subheader("Monthly Cases Heatmap by District")
+    pivot_df = filtered_df.pivot_table(index="Distric", columns="Month", values="Cases", aggfunc="sum").fillna(0)
+
+    fig, ax = plt.subplots(figsize=(14,6))
+    sns.heatmap(pivot_df, annot=True, fmt=".0f", cmap="OrRd", linewidths=0.5, ax=ax)
+    st.pyplot(fig)
+    
 
 
 
