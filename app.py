@@ -2,4 +2,4 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-st.write("Hello World")
+st.set_page_config(page_title="COVID-19 Dashboard - Sri Lanka", layout="wide")
