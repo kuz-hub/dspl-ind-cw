@@ -53,6 +53,13 @@ with tab1:
     line_fig =px.line(filtered_df,x="Month", y="Cases", color="Distric", markers=True)
     st.plotly_chart(line_fig, use_container_width=True)
 
-    
+    #Bar chart
+    st.markdown("### Total Cases by District")
+    bar_df = filtered_df.groupby("Distric")["Cases"].sum().reset_index().sort_values(by="Cases", ascending=False)
+    bar_fig = px.bar(bar_df, x="Distric", y="Cases", color="Distric", text="Cases")
+    st.plotly_chart(bar_fig, use_container_width=True)
+
+
+
 
 
