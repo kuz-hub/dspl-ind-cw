@@ -80,12 +80,18 @@ with tab1:
 #Heatmap
 with tab2:
     st.subheader("Monthly Cases Heatmap by District")
+
     pivot_df = filtered_df.pivot_table(index="Distric", columns="Month", values="Cases", aggfunc="sum").fillna(0)
+    pivot_df = pivot_df.sort_index(axis=1)
 
     fig, ax = plt.subplots(figsize=(14,6))
     sns.heatmap(pivot_df, annot=True, fmt=".0f", cmap="OrRd", linewidths=0.5, ax=ax)
+    plt.title("COVID-19 Monthly Case Distribution by District", fontsize=16)
+    plt.xlabel("Month")
+    plt.ylabel("District")
+    plt.xticks(rotation=45, ha='right')
+    plt.yticks(rotation=0)
     st.pyplot(fig)
-    
 
 
 
