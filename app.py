@@ -59,6 +59,13 @@ with tab1:
     bar_fig = px.bar(bar_df, x="Distric", y="Cases", color="Distric", text="Cases")
     st.plotly_chart(bar_fig, use_container_width=True)
 
+    #Pie chart
+    st.markdown("### Case Distribution by District")
+    pie_fig = px.pie(bar_df, names="Distric", values="Cases", title="Proportion of Cases by District")
+    st.plotly_chart(pie_fig, use_container_width=True)
+
+
+
 
 
 
