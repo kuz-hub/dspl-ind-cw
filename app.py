@@ -48,4 +48,11 @@ with tab1:
     col3.metric("Most Affected District", most_affected)
     col4.metric("Month with Highest Cases", highest_month)
 
+    #Line chart
+    st.markdown("### Monthly Trend by District")
+    line_fig =px.line(filtered_df,x="Month", y="Cases", color="Distric", markers=True)
+    st.plotly_chart(line_fig, use_container_width=True)
+
+    
+
 
