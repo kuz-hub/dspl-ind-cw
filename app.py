@@ -15,6 +15,7 @@ def load_data():
 df = load_data()
 
 
+
 st.title ("COVID-19 Dashboard - Sri Lanka")
 st.markdown("This dashboard provides insights on COVID-19 cases across different districs in Sri Lanka.")
 
@@ -27,6 +28,7 @@ districts = st.sidebar.multiselect(
     "Select Distric(s):", options=sorted(df["Distric"].unique()), default=sorted(df["Distric"].unique()))
 months = st.sidebar.multiselect(
     "Select Month(s):", options=sorted(df["Month"].unique()), default=sorted(df["Month"].unique()))
+
 
 #Filtered data
 filtered_df = df[(df["Distric"].isin(districts)) & (df["Month"].isin(months))]
@@ -48,7 +50,8 @@ with tab1:
     col3.metric("Most Affected District", most_affected)
     col4.metric("Month with Highest Cases", highest_month)
 
-    #Line chart
+
+    #Line chart 
     # Line Chart: Top 5 or All Districts Toggle
     st.markdown("### 📉 Monthly COVID-19 Cases by Districts")
     
@@ -83,7 +86,7 @@ with tab1:
         template="plotly_white",
         xaxis_title="Month",
         yaxis_title="Number of Cases",
-        title_x=0.
+        title_x=0.5
         )
     
     st.plotly_chart(line_fig, use_container_width=True)
@@ -117,12 +120,19 @@ with tab1:
 with tab2:
     st.subheader("🌡️ Monthly COVID-19 Cases Heatmap by District")
 
-    # Heatmap Section
-    sorted_df = filtered_df.copy()
-    pivot_df = sorted_df.pivot_table(index="Distric", columns="Month", values="Cases", aggfunc="sum").fillna(0)
-    pivot_df = pivot_df.sort_index(axis=1)
+    # Convert 'Month' to datetime and sort
+    df["Month"] = pd.to_datetime(df["Month"] + "-" + df["Year"].astype(str), format="%B-%Y")
+    df = df.sort_values(["Year", "Month"])
 
-    fig, ax = plt.subplots(figsize=(16, 8))
+
+
+    # Heatmap Section
+    
+    pivot_df = df.pivot_table(index="Distric", columns="Month", values="Cases", aggfunc="sum").fillna(0)
+    
+    pivot_df.columns = pivot_df.columns.strftime("%b-%y")
+
+    fig, ax = plt.subplots(figsize=(20,10))
     sns.heatmap(
         pivot_df,
         annot=True,
@@ -130,14 +140,16 @@ with tab2:
         cmap="YlOrRd",
         linewidths=0.3,
         linecolor='white',
-        cbar_kws={'label': 'Number of Cases'}
+        cbar_kws={'label': 'Number of Cases'},
+        annot_kws={"size": 8}
     )
-    plt.title("COVID-19 Monthly Case Distribution by District", fontsize=16)
-    plt.xlabel("Month")
-    plt.ylabel("District")
-    plt.xticks(rotation=45, ha='right')
-    plt.yticks(rotation=0)
-    st.pyplot(fig)
+    plt.title("COVID-19 Monthly Case Distribution by District", fontsize=18, pad=20)
+    plt.xlabel("Month", fontsize=14)
+    plt.ylabel("District", fontsize=14)
+    plt.xticks(rotation=45, ha='right', fontsize=10)
+    plt.yticks(rotation=0, fontsize=10)
+    plt.tight_layout()
+    st.pyplot(plt.gcf())
 
 #Data table
 with tab3:
@@ -150,7 +162,6 @@ with tab4:
     csv = filtered_df.to_csv(index=False).encode('utf-8')
     st.download_button("Download csv", data=csv, file_name='filtered_covid_data.csv', mime='text/csv')
 
-with tab4:
     st.expander("Insights Summary", expanded=True)
     latest_month = filtered_df["Month"].iloc[-1]
     last_month_df = filtered_df[filtered_df["Month"] == latest_month]
@@ -163,7 +174,7 @@ with tab4:
     trend_direction = "📈 Increased" if monthly_trend.iloc[-1] > 0 else "📉 Decreased"
     st.markdown(f"{trend_direction} cases compared to the previous month.")
 
-with tab4:
+
     st.sidebar.expander("💡 Did You Know?")
     st.info("""
     - The first COVID-19 case in Sri Lanka was reported in **January 2020**.
@@ -173,11 +184,13 @@ with tab4:
 if "selected_districts" not in st.session_state:
     st.session_state.selected_districts = df["Distric"].unique().tolist()
 
-districts = st.sidebar.multiselect(
+    districts = st.sidebar.multiselect(
     "Select District(s):",
     options=sorted(df["Distric"].unique()),
     default=st.session_state.selected_districts
 )
+
+
 
 with tab2:
     # Map Section
