@@ -28,7 +28,8 @@ districts = st.sidebar.multiselect(
     "Select Distric(s):", options=sorted(df["Distric"].unique()), default=[]
     )
 months = st.sidebar.multiselect(
-    "Select Month(s):", options=sorted(df["Month"].unique()), default=sorted(df["Month"].unique()))
+    "Select Month(s):", options=sorted(df["Month"].unique()), default=[]
+    )
 
 
 #Filtered data
