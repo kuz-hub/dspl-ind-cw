@@ -58,23 +58,38 @@ with tab1:
 
 
     #Line chart 
-    # Line Chart: Top 5 or All Districts Toggle
+    # Line Chart: Top 10 or All Districts Toggle
     st.markdown("### 📉 Monthly COVID-19 Cases by Districts")
     
     show_all = st.sidebar.checkbox("Show All Districts in Line Chart", value=False)
     
-    if show_all:
-        display_df = filtered_df.copy()
-        chart_title = "Monthly COVID-19 Cases - All Districts"
+    if districts or months:
+        if show_all:
+            display_df = filtered_df.copy()
+            chart_title = "Monthly COVID-19 Cases - All Districts"
+        else:
+            top_10_districts = (
+            filtered_df.groupby("Distric")["Cases"].sum()
+            .sort_values(ascending=False)
+            .head(10)
+            .index.tolist()
+            )
+            display_df = filtered_df[filtered_df["Distric"].isin(top_10_districts)]
+            chart_title = "Monthly COVID-19 Cases - Top 10 Districts"
     else:
-        top_5_districts = (
-        filtered_df.groupby("Distric")["Cases"].sum()
-        .sort_values(ascending=False)
-        .head(5)
-        .index.tolist()
-    )
-    display_df = filtered_df[filtered_df["Distric"].isin(top_5_districts)]
-    chart_title = "Monthly COVID-19 Cases - Top 5 Districts"
+        if show_all:
+            display_df = df.copy()
+            chart_title = "Monthly COVID-19 Cases - All Districts"
+        else:
+            top_10_districts = (
+                df.groupby("Distric")["Cases"].sum()
+                .sort_values(ascending=False)
+                .head(10)
+                .index.tolist()
+            )
+            display_df = df[df["Distric"].isin(top_10_districts)]
+            chart_title = "Monthly COVID-19 Cases - Top 10 Districts (Default)"
+     
 
     line_fig = px.line(
         display_df,
