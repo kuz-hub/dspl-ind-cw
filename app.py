@@ -40,23 +40,24 @@ tab1, tab2, tab3, tab4 = st.tabs(["📈 Visualizations", "📊 Heatmap", "🧾 D
 
 #Key matrics
 with tab1:
-
-    if filtered_df.empty:
-        data_for_metrics = df.copy()
-    else:
-        data_for_metrics = filtered_df
-
-    st.subheader("Key Metrics")
     total_cases = filtered_df["Cases"].sum()
     avg_cases = filtered_df["Cases"].mean()
-    most_affected = filtered_df.groupby("Distric")["Cases"].sum().idxmax()
-    highest_month = filtered_df.groupby("Month")["Cases"].sum().idxmax()
 
+    # Safely find most affected district and month
+    if not filtered_df.empty:
+        most_affected = filtered_df.groupby("Distric")["Cases"].sum().idxmax()
+        highest_month = filtered_df.groupby("Month")["Cases"].sum().idxmax()
+    else:
+        most_affected = "-"
+        highest_month = "-"
+
+    # Display Key Metrics
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Total Cases", f"{total_cases:,}")
     col2.metric("Average Monthly", f"{avg_cases:.2f}")
     col3.metric("Most Affected District", most_affected)
-    col4.metric("Month with Highest Cases", highest_month)
+    col4.metric("Month with Highest Cases", highest_month if highest_month == "-" else highest_month.strftime("%B %Y"))
+
 
 
     #Line chart 
