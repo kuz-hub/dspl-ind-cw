@@ -25,7 +25,8 @@ with st.expander("View raw data"):
 #sliderbar filter
 st.sidebar.header("Filter Data")
 districts = st.sidebar.multiselect(
-    "Select Distric(s):", options=sorted(df["Distric"].unique()), default=sorted(df["Distric"].unique()))
+    "Select Distric(s):", options=sorted(df["Distric"].unique()), default=[]
+    )
 months = st.sidebar.multiselect(
     "Select Month(s):", options=sorted(df["Month"].unique()), default=sorted(df["Month"].unique()))
 
@@ -38,6 +39,12 @@ tab1, tab2, tab3, tab4 = st.tabs(["📈 Visualizations", "📊 Heatmap", "🧾 D
 
 #Key matrics
 with tab1:
+
+    if filtered_df.empty:
+        data_for_metrics = df.copy()
+    else:
+        data_for_metrics = filtered_df
+
     st.subheader("Key Metrics")
     total_cases = filtered_df["Cases"].sum()
     avg_cases = filtered_df["Cases"].mean()
@@ -70,7 +77,6 @@ with tab1:
     display_df = filtered_df[filtered_df["Distric"].isin(top_5_districts)]
     chart_title = "Monthly COVID-19 Cases - Top 5 Districts"
 
-    # Line Chart
     line_fig = px.line(
         display_df,
         x="Month",
