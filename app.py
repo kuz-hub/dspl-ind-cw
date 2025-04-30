@@ -249,6 +249,19 @@ with tab2:
     # Map Section
     st.subheader("📍 COVID-19 Case Distribution on Map")
 
+    if districts or months:
+        map_df = filtered_df.copy()
+    else:
+        map_df = df.copy()
+
+    # Clean up
+    map_df = map_df[map_df["Distric"].notna()]
+    map_df["Distric"] = map_df["Distric"].astype(str).str.strip().str.title()
+
+    # Use latest month’s data only for mapping
+    latest_map_month = map_df["Month"].max()
+    latest_map_df = map_df[map_df["Month"] == latest_map_month]
+
 
     # Coordinates
     district_coords = {
@@ -279,7 +292,6 @@ with tab2:
         "Vavuniya": [8.7510, 80.4970]
     }
 
-    map_df = filtered_df.copy()
     map_df["lat"] = map_df["Distric"].map(lambda d: district_coords.get(d, [None, None])[0])
     map_df["lon"] = map_df["Distric"].map(lambda d: district_coords.get(d, [None, None])[1])
     map_df = map_df.dropna(subset=["lat", "lon"])
