@@ -239,14 +239,6 @@ with tab4:
     - Certain districts like **Colombo** and **Gampaha** consistently reported higher numbers.
     - Month-on-month trends help predict healthcare needs.
     """)
-if "selected_districts" not in st.session_state:
-    st.session_state.selected_districts = df["Distric"].unique().tolist()
-
-    districts = st.sidebar.multiselect(
-    "Select District(s):",
-    options=sorted(df["Distric"].unique()),
-    default=st.session_state.selected_districts
-)
 
 
 
