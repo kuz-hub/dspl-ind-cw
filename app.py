@@ -213,7 +213,13 @@ with tab2:
 #Data table
 with tab3:
     st.subheader("Filtered Data Table")
-    st.dataframe(filtered_df.sort_values(by="Month"))
+
+    if districts or months:
+        table_data = filtered_df.copy()
+    else:
+        table_df = df.copy()
+        
+    st.dataframe(table_df.sort_values(by=["Year", "Month"]))
 
 #Export
 with tab4:
