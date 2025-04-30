@@ -10,6 +10,7 @@ st.set_page_config(page_title="COVID-19 Dashboard - Sri Lanka", layout="wide")
 def load_data():
     df = pd.read_csv("monthly data.csv")
     df.columns = df.columns.str.strip()
+    df["Distric"] = df["Distric"].astype(str).str.strip().str.title()
     return df
 
 df = load_data()
