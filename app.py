@@ -115,10 +115,28 @@ with tab1:
     #Bar chart
     st.markdown("### Total Cases by District")
     bar_df = filtered_df.groupby("Distric")["Cases"].sum().reset_index().sort_values(by="Cases", ascending=False)
-    bar_fig = px.bar(bar_df, x="Distric", y="Cases", color="Distric", text="Cases")
+    bar_fig = px.bar(
+        bar_df,
+        x="Distric",
+        y="Cases",
+        color="Distric",
+        text="Cases"
+        )
+    bar_fig.update_traces(
+        texttemplate='%{text:,}',
+        textposition='outside'
+        )
+    bar_fig.update_layout(
+        xaxis_title="District",
+        yaxis_title="Total Cases",
+        uniformtext_minsize=8,
+        uniformtext_mode='hide',
+        template="plotly_white"
+        )
+
     st.plotly_chart(bar_fig, use_container_width=True)
 
-    #Pie chart
+    #Pie ch-art
     st.markdown("### Case Distribution by District")
     pie_fig = px.pie(bar_df, names="Distric", values="Cases", title="Proportion of Cases by District")
 
