@@ -117,33 +117,44 @@ with tab1:
 
     if districts or months:
         base_df = filtered_df.copy()
+        chart_title = "Total case by district (Filtered)"
+
     else:
         base_df = df.copy()
+        chart_title = "Top 5 Districts by Total Cases"
+    
+    base_df = base_df[base_df["Distric"].notna()]
+    base_df ["Cases"] = pd.to_numeric(base_df["Cases"], errors="coerce")
+    base_df = base_df.dropna(subset=["Cases"])
 
-    bar_df = filtered_df.groupby("Distric")["Cases"].sum().reset_index().sort_values(by="Cases", ascending=False)
+    bar_df = base_df.groupby("Distric", as_index=False)["Cases"].sum()
+    bar_df = bar_df.sort_values (by="Cases", ascending=False)
 
-    if not bar_df.empty:
-        bar_fig = px.bar(
-            bar_df,
-            x="Distric",
-            y="Cases",
-            color="Distric",
-            text="Cases"
-            )
-        bar_fig.update_traces(
-            texttemplate='%{text:,}',
-            textposition='outside'
-            )
-        bar_fig.update_layout(
-            xaxis_title="District",
-            yaxis_title="Total Cases",
-            uniformtext_minsize=8,
-            uniformtext_mode='hide',
-            template="plotly_white"
-            )
-        st.plotly_chart(bar_fig, use_container_width=True)
-    else:
-        st.warning("⚠️ No data available to display the bar chart. Please adjust your filters.")
+    if not (districts or months):
+        bar_df = bar_df.head(5)
+
+    
+    bar_fig = px.bar(
+        bar_df,
+        x="Distric",
+        y="Cases",
+        color="Distric",
+        text="Cases",
+        title=chart_title
+        )
+    
+    bar_fig.update_traces(
+        texttemplate='%{text:,}',
+        textposition='outside'
+        )
+    bar_fig.update_layout(
+        xaxis_title="District",
+        yaxis_title="Total Cases",
+        uniformtext_minsize=8,
+        uniformtext_mode='hide',
+        template="plotly_white"
+        )
+    st.plotly_chart(bar_fig, use_container_width=True)
 
     #Pie ch-art
     st.markdown("### Case Distribution by District")
