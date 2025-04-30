@@ -222,30 +222,33 @@ with tab4:
     st.download_button("Download csv", data=csv, file_name='filtered_covid_data.csv', mime='text/csv')
 
     st.expander("Insights Summary", expanded=True)
-    latest_month = filtered_df["Month"].iloc[-1]
-    last_month_df = filtered_df[filtered_df["Month"] == latest_month]
-    top_district = last_month_df.sort_values("Cases", ascending=False).iloc[0]["Distric"]
-    top_district_cases = last_month_df.sort_values("Cases", ascending=False).iloc[0]["Cases"]
 
-    st.markdown(f"🧠 In **{latest_month}**, the district with the highest cases was **{top_district}** with **{int(top_district_cases):,} cases**.")
+    if districts or months:
+        base_df = filtered_df.copy()
+    else:
+        base_df = df.copy()
 
-    monthly_trend = filtered_df.groupby("Month")["Cases"].sum().diff().dropna()
-    trend_direction = "📈 Increased" if monthly_trend.iloc[-1] > 0 else "📉 Decreased"
-    st.markdown(f"{trend_direction} cases compared to the previous month.")
+    if not base_df.empty:
+        base_df = base_df.sort_values(by="Month")  # ensure sorted for iloc[-1]
+        latest_month = base_df["Month"].iloc[-1]
+        last_month_df = base_df[base_df["Month"] == latest_month]
 
+        top_district = last_month_df.sort_values("Cases", ascending=False).iloc[0]["Distric"]
+        top_district_cases = last_month_df.sort_values("Cases", ascending=False).iloc[0]["Cases"]
 
-    st.sidebar.expander("💡 Did You Know?")
-    st.info("""
-    - The first COVID-19 case in Sri Lanka was reported in **January 2020**.
-    - Certain districts like **Colombo** and **Gampaha** consistently reported higher numbers.
-    - Month-on-month trends help predict healthcare needs.
-    """)
+        st.markdown(f"🧠 In **{latest_month}**, the district with the highest cases was **{top_district}** with **{int(top_district_cases):,} cases**.")
+
+        monthly_trend = base_df.groupby("Month")["Cases"].sum().diff().dropna()
+        if not monthly_trend.empty:
+            trend_direction = "📈 Increased" if monthly_trend.iloc[-1] > 0 else "📉 Decreased"
+            st.markdown(f"{trend_direction} cases compared to the previous month.")         
 
 
 
 with tab2:
     # Map Section
     st.subheader("📍 COVID-19 Case Distribution on Map")
+
 
     # Coordinates
     district_coords = {
