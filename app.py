@@ -215,7 +215,7 @@ with tab3:
     st.subheader("Filtered Data Table")
 
     if districts or months:
-        table_data = filtered_df.copy()
+        table_df = filtered_df.copy()
     else:
         table_df = df.copy()
         
