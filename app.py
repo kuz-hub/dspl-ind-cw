@@ -179,21 +179,20 @@ with tab1:
 with tab2:
     st.subheader("🌡️ Monthly COVID-19 Cases Heatmap by District")
 
-    # Convert 'Month' to datetime and sort
-    df["Month"] = pd.to_datetime(df["Month"] + "-" + df["Year"].astype(str), format="%B-%Y")
-    df = df.sort_values(["Year", "Month"])
+    # ✅ Reload the original dataset directly inside this block
+    heatmap_df = pd.read_csv("monthly data.csv")
+    heatmap_df.columns = heatmap_df.columns.str.strip()
 
+    # ✅ Convert Month-Year to datetime
+    heatmap_df["Month"] = pd.to_datetime(heatmap_df["Month"] + "-" + heatmap_df["Year"].astype(str), format="%B-%Y")
+    heatmap_df = heatmap_df.sort_values(["Year", "Month"])
 
-
-    # Heatmap Section
-
-    heatmap_df = df.copy()
-    
+    # ✅ Create pivot table for heatmap
     pivot_df = heatmap_df.pivot_table(index="Distric", columns="Month", values="Cases", aggfunc="sum").fillna(0)
-    
     pivot_df.columns = pivot_df.columns.strftime("%b-%y")
 
-    fig, ax = plt.subplots(figsize=(20,10))
+    # ✅ Plot the heatmap
+    fig, ax = plt.subplots(figsize=(20, 10))
     sns.heatmap(
         pivot_df,
         annot=True,
@@ -204,13 +203,16 @@ with tab2:
         cbar_kws={'label': 'Number of Cases'},
         annot_kws={"size": 8}
     )
+
     plt.title("COVID-19 Monthly Case Distribution by District", fontsize=18, pad=20)
     plt.xlabel("Month", fontsize=14)
     plt.ylabel("District", fontsize=14)
     plt.xticks(rotation=45, ha='right', fontsize=10)
     plt.yticks(rotation=0, fontsize=10)
     plt.tight_layout()
-    st.pyplot(plt.gcf())
+
+    st.pyplot(fig)
+
 
 #Data table
 with tab3:
