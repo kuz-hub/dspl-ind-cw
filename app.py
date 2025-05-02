@@ -186,13 +186,10 @@ with tab2:
 
 
     # Heatmap Section
-    with tab2:
-        st.subheader("🌡️ Monthly COVID-19 Cases Heatmap by District")
-    
+
     heatmap_df = df.copy()
     
-
-    pivot_df = df.pivot_table(index="Distric", columns="Month", values="Cases", aggfunc="sum").fillna(0)
+    pivot_df = heatmap_df.pivot_table(index="Distric", columns="Month", values="Cases", aggfunc="sum").fillna(0)
     
     pivot_df.columns = pivot_df.columns.strftime("%b-%y")
 
